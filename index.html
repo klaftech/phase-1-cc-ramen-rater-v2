@@ -6,6 +6,7 @@
   <title>Ramen Rater</title>
   <link rel="stylesheet" type="text/css" href="styles.css" />
   <script defer type="module" src="./src/index.js"></script>
+  <!--<script defer src="./src/index.js"></script>-->
 </head>
 
 <body>
@@ -33,8 +34,18 @@
   <p id='comment-display'>
     Insert comment here
   </p>
+  
+  <button id="delete-ramen" name="delete-ramen">Delete</button>
 
-
+  <form id="edit-ramen">
+    <h4>Update the Featured Ramen</h4>
+    <label for="edit-rating">Rating: </label>
+    <input type="number" name="edit-rating" id="edit-rating" />
+    <label for="edit-comment">Comment: </label>
+    <textarea name="edit-comment" id="edit-comment"></textarea>
+    <input type="submit" value="Update" />
+  </form>
+  
   <form id="new-ramen">
     <h4>Add New Ramen</h4>
     <label for="new-name">Name: </label>

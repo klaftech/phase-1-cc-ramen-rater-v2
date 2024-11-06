@@ -71,6 +71,16 @@ form {
   align-items: flex-start;
 }
 
+
+button {
+  margin: 1rem 0;
+  width: 300px;
+  border: 1px solid white;
+  background-color: black;
+  padding: 0.25rem;
+  color: white;
+}
+
 input,
 textarea {
   font-size: 1rem;
