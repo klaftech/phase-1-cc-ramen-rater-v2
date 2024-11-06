@@ -40,15 +40,57 @@ const deleteBtn = document.querySelector("button#delete-ramen")
 ///////////////////////////////////////////
 // global functions
 ///////////////////////////////////////////
+function buildRequestObj(method, payloadObj){
+  return {
+    method: ""+method+"",
+    headers: {
+      "Content-type": "application/json; charset=UTF-8",
+      //"Accept"
+    },
+    body: JSON.stringify(payloadObj),
+  }
+}
+
 function getJSON(id){
   let useUrl = baseUrl
   if(id){
     useUrl = baseUrl + "/" + id
   }
+
   return fetch(useUrl)
-  .then((response) => response.json())
+  .then((response) => {
+    if (!response.ok) {
+      // Throw an error if the response status is not OK
+      throw new Error(`Network response was not ok: ${response.status}`);
+    }
+    return response.json();
+  })
   .then((data) => data)
-  //.catch((error) => throw new error)
+  .catch((error) => console.error("Error fetching data: ",error))
+}
+
+function postJSON(payloadObj){ 
+  fetch(baseUrl, buildRequestObj("POST",payloadObj))
+  .then((response) => response.json())
+  .then((data) => renderRamenNav(data))
+  .catch((error) => console.error(error))
+}
+
+function patchJSON(ramenId,payloadObj){ 
+  fetch(baseUrl+"/"+ramenId, buildRequestObj("PATCH",payloadObj))
+  .then((response) => response.json())
+  .then((data) => {
+    selectedRamen = data
+    renderRamenDetails(data)
+  })
+  .catch((error) => console.error(error))
+}
+
+function deleteJSON(ramenId){ 
+  fetch(baseUrl+"/"+ramenId,buildRequestObj("DELETE",{}))
+  .then((response) => console.log(response))
+  //.then((data) => console.log(data))
+  .catch((error) => console.error(error))
 }
 
 function renderRamenDetails(ramen){
@@ -82,10 +124,19 @@ function renderAllRamens(ramensArray){
   })
 }
 
-
 ///////////////////////////////////////////
 // arrow functions
 ///////////////////////////////////////////
+
+// const initRamen = () => {
+//   return {
+//     name: "Demo Name",
+//     restaurant: "Demo Restaurant",
+//     image:  "./assets/image-placeholder.jpg",
+//     rating: Math.random(),
+//     comment: "No comment",
+//   }
+// }
 
 const buildRamenObj = (e) => {
   return {
@@ -108,7 +159,7 @@ const renderPlaceholder = () => {
 
 const handleFormCreate = (e) => {
   e.preventDefault()
-  renderRamenNav(buildRamenObj(e))
+  postJSON(buildRamenObj(e))
   e.target.reset()
 }
 
@@ -116,10 +167,16 @@ const handleFormUpdate = (e) => {
   e.preventDefault()
   const formRating = e.target["edit-rating"].value
   const formComment = e.target["edit-comment"].value
-  if(formRating){selectedRamen.rating = formRating}
-  if(formComment){selectedRamen.comment = formComment}
-  
-  renderRamenDetails(selectedRamen)
+  const patchObj = {}
+  if(formRating){
+    patchObj.rating = formRating
+    selectedRamen.rating = formRating
+  }
+  if(formComment){
+    patchObj.comment = formComment
+    selectedRamen.comment = formComment
+  }
+  patchJSON(selectedRamen.id,patchObj)
   e.target.reset()
 }
 
@@ -131,8 +188,9 @@ const handleDelete = (e) => {
   //console.log(prevRamen)
   //console.log(nextRamen)
   
+  deleteJSON(ramenToDelete.id)
   ramenToDelete.remove()
-
+  
   if (prevRamen || nextRamen) {
     let getRamenId
 

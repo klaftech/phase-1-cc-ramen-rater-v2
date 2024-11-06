@@ -89,11 +89,9 @@ describe('displayRamens', () => {
         const ramenMenuDiv = document.getElementById('ramen-menu');
 
         displayRamens();
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 0));
 
         const ramenImages = ramenMenuDiv.querySelectorAll('img');
-        //console.log('logging')
-        //console.log(ramenMenuDiv.querySelectorAll('img'))
         const urls = Array.from(ramenImages).map((ramenImg) => ramenImg.src);
         const originalUrls = testResponseData.map((ramen) => ramen.image);
 
